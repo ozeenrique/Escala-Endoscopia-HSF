@@ -1,143 +1,131 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a2f6f" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a2f6f">
   <title>HSF – Endoscopia | Dashboard de Sobreaviso</title>
-  <meta name="description" content="Dashboard de sobreaviso da Endoscopia HSF" />
+  <meta name="description" content="Dashboard de sobreaviso da Endoscopia HSF">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="page-shell">
-    <header class="hero">
-      <div class="brand-mark" aria-hidden="true">
-        <div class="shield">+</div>
-      </div>
+<main class="page-shell">
+  <header class="hero">
+    <div class="brand-mark" aria-hidden="true"><div class="shield">+</div></div>
+    <div class="hero-copy">
+      <h1>HSF – Endoscopia</h1>
+      <p class="subtitle">Dashboard de Sobreaviso</p>
+      <p class="updated">Atualizado automaticamente conforme a escala</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 180 180">
+        <path d="M48 38v43c0 20 16 36 36 36s36-16 36-36V60"/>
+        <path d="M120 61c0-14 11-25 25-25 12 0 22 8 25 19"/>
+        <circle cx="145" cy="57" r="11"/>
+        <path d="M31 26h34M40 14v24M56 14v24"/>
+      </svg>
+    </div>
+  </header>
 
-      <div class="hero-copy">
-        <h1>HSF – Endoscopia</h1>
-        <p class="subtitle">Dashboard de Sobreaviso</p>
-        <p class="updated">Atualizado automaticamente conforme a escala</p>
-      </div>
+  <nav class="action-bar" aria-label="Ações do dashboard">
+    <a id="whatsappButton" class="action-button whatsapp" href="#" target="_blank" rel="noopener">
+      <span class="action-icon">◉</span>
+      <span><strong>WhatsApp</strong><small>Falar com o plantonista</small></span>
+    </a>
+    <button id="showSchedule" class="action-button" type="button">
+      <span class="action-icon">▦</span>
+      <span><strong>Escala completa</strong><small>Ver todos os dias</small></span>
+    </button>
+    <button id="showMonthly" class="action-button" type="button">
+      <span class="action-icon">≡</span>
+      <span><strong>Plantões por mês</strong><small>Dias de cada médico</small></span>
+    </button>
+  </nav>
 
-      <div class="hero-art" aria-hidden="true">
-        <svg viewBox="0 0 180 180" role="img">
-          <path d="M48 38v43c0 20 16 36 36 36s36-16 36-36V60" />
-          <path d="M120 61c0-14 11-25 25-25 12 0 22 8 25 19" />
-          <circle cx="145" cy="57" r="11" />
-          <path d="M31 26h34M40 14v24M56 14v24" />
-        </svg>
+  <section class="dashboard-grid">
+    <article class="card main-card">
+      <div class="card-head">
+        <div class="icon-bubble"><span>✚</span></div>
+        <h2>ENDOSCOPISTA DE PLANTÃO HOJE</h2>
       </div>
-    </header>
-
-    <section class="dashboard-grid">
-      <article class="card main-card">
-        <div class="card-head">
-          <div class="icon-bubble">
-            <span class="doctor-icon">✚</span>
-          </div>
-          <h2>ENDOSCOPISTA DE PLANTÃO HOJE</h2>
+      <div class="card-body main-body">
+        <div id="todayDate" class="date-line">—</div>
+        <div id="doctorName" class="doctor-name">—</div>
+        <div class="phone-row">
+          <span class="round-icon">☎</span>
+          <a id="doctorPhone" class="doctor-phone" href="#">—</a>
         </div>
-
-        <div class="card-body main-body">
-          <div id="todayDate" class="date-line">—</div>
-          <div id="doctorName" class="doctor-name">—</div>
-
-          <div class="phone-row">
-            <span class="round-icon">☎</span>
-            <a id="doctorPhone" class="doctor-phone" href="#">—</a>
+        <div class="status-pill"><span class="status-dot">✓</span><span>Plantão ativo</span></div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="small-icon">◷</span><span class="label">Tipo de plantão hoje:</span><strong id="shiftType">—</strong>
           </div>
-
-          <div class="status-pill">
-            <span class="status-dot">✓</span>
-            <span>Plantão ativo</span>
+          <div class="info-row">
+            <span class="small-icon">▣</span><span class="label label-strong">Amanhã:</span><span id="tomorrowInfo">—</span>
           </div>
-
-          <div class="info-list">
-            <div class="info-row">
-              <span class="small-icon">◷</span>
-              <span class="label">Tipo de plantão hoje:</span>
-              <strong id="shiftType">—</strong>
-            </div>
-
-            <div class="info-row">
-              <span class="small-icon">▣</span>
-              <span class="label label-strong">Amanhã:</span>
-              <span id="tomorrowInfo">—</span>
-            </div>
-
-            <div class="info-row">
-              <span class="small-icon">↻</span>
-              <span class="label label-strong">Próxima troca:</span>
-              <span id="nextChange">—</span>
-            </div>
+          <div class="info-row">
+            <span class="small-icon">↻</span><span class="label label-strong">Próxima troca:</span><span id="nextChange">—</span>
           </div>
         </div>
-      </article>
-
-      <article class="card daytime-card">
-        <div class="card-head daytime-head">
-          <div class="icon-bubble">☎</div>
-          <h2>CONTATO DIURNO</h2>
-        </div>
-
-        <div class="card-body daytime-body">
-          <p>Segunda a sábado, 7h às 19h</p>
-
-          <div class="day-phone">
-            <span class="round-icon">☎</span>
-            <a href="tel:+5516991651192">(16) 99165-1192</a>
-          </div>
-
-          <div class="day-note">
-            <span class="info-symbol">i</span>
-            <em>Usar este contato no período diurno</em>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <section class="legend-card">
-      <div class="legend-title">
-        <span class="legend-round">▤</span>
-        <strong>Legenda</strong>
       </div>
+    </article>
 
-      <div class="legend-item">
-        <span class="legend-round">☾</span>
-        <div>
-          <span>Sobreaviso noturno:</span>
-          <strong>19h às 7h</strong>
-        </div>
+    <article class="card daytime-card">
+      <div class="card-head daytime-head"><div class="icon-bubble">☎</div><h2>CONTATO DIURNO</h2></div>
+      <div class="card-body daytime-body">
+        <p>Segunda a sábado, 7h às 19h</p>
+        <div class="day-phone"><span class="round-icon">☎</span><a href="tel:+5516991651192">(16) 99165-1192</a></div>
+        <div class="day-note"><span class="info-symbol">i</span><em>Usar este contato no período diurno</em></div>
       </div>
+    </article>
+  </section>
 
-      <div class="legend-item">
-        <span class="legend-round">24h</span>
-        <div>
-          <span>Domingo:</span>
-          <strong>plantão 24h</strong>
-        </div>
-      </div>
+  <section class="legend-card">
+    <div class="legend-title"><span class="legend-round">▤</span><strong>Legenda</strong></div>
+    <div class="legend-item"><span class="legend-round">☾</span><div><span>Sobreaviso noturno:</span><strong>19h às 7h</strong></div></div>
+    <div class="legend-item"><span class="legend-round">24h</span><div><span>Domingo:</span><strong>plantão 24h</strong></div></div>
+    <div class="legend-item"><span class="legend-round">⚙</span><div><span>Informações exibidas</span><strong>automaticamente com base na escala</strong></div></div>
+  </section>
 
-      <div class="legend-item">
-        <span class="legend-round">⚙</span>
-        <div>
-          <span>Informações exibidas</span>
-          <strong>automaticamente com base na escala</strong>
-        </div>
-      </div>
-    </section>
+  <section id="schedulePanel" class="detail-panel" hidden>
+    <div class="panel-heading">
+      <div><p class="eyebrow">CONSULTA</p><h2>Escala completa, dia a dia</h2><p>Selecione o período ou pesquise pelo nome do médico.</p></div>
+      <button class="close-panel" type="button" data-close="schedulePanel" aria-label="Fechar">×</button>
+    </div>
+    <div class="filters">
+      <label>Ano<select id="scheduleYear"></select></label>
+      <label>Mês<select id="scheduleMonth"><option value="all">Todos</option></select></label>
+      <label class="search-label">Pesquisar<input id="scheduleSearch" type="search" placeholder="Ex.: Luciana ou 15/09"></label>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Dia</th><th>Endoscopista</th><th>Plantão</th></tr></thead>
+        <tbody id="scheduleTable"></tbody>
+      </table>
+    </div>
+    <p id="scheduleCount" class="result-count"></p>
+  </section>
 
-    <footer>
-      <span>HSF – Endoscopia</span>
-      <span id="coverageNote">Escala cadastrada de 28/08/2026 a 31/12/2027</span>
-    </footer>
-  </main>
+  <section id="monthlyPanel" class="detail-panel" hidden>
+    <div class="panel-heading">
+      <div><p class="eyebrow">RESUMO MENSAL</p><h2>Dias de plantão por médico</h2><p>Quantidade e datas em que cada profissional ficou de sobreaviso.</p></div>
+      <button class="close-panel" type="button" data-close="monthlyPanel" aria-label="Fechar">×</button>
+    </div>
+    <div class="filters compact">
+      <label>Ano<select id="monthlyYear"></select></label>
+      <label>Mês<select id="monthlyMonth"></select></label>
+    </div>
+    <div id="monthlyCards" class="monthly-cards"></div>
+  </section>
 
-  <script src="app.js"></script>
+  <footer>
+    <span>HSF – Endoscopia</span>
+    <span>Escala cadastrada de 01/01/2026 a 31/12/2027</span>
+  </footer>
+</main>
+<script src="app.js"></script>
 </body>
 </html>
