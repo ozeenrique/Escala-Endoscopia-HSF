@@ -37,11 +37,11 @@
     </a>
     <button id="showSchedule" class="action-button" type="button">
       <span class="action-icon">▦</span>
-      <span><strong>Escala completa</strong><small>Ver todos os dias</small></span>
+      <span><strong>Escala completa</strong><small>Ver dia, médico e duração</small></span>
     </button>
     <button id="showMonthly" class="action-button" type="button">
       <span class="action-icon">≡</span>
-      <span><strong>Plantões por mês</strong><small>Dias de cada médico</small></span>
+      <span><strong>Plantões por mês</strong><small>Contagem de 12h e 24h</small></span>
     </button>
   </nav>
 
@@ -63,6 +63,9 @@
           <div class="info-row">
             <span class="small-icon">◷</span><span class="label">Tipo de plantão hoje:</span><strong id="shiftType">—</strong>
           </div>
+          <div id="holidayRow" class="info-row holiday-row" hidden>
+            <span class="small-icon">★</span><span class="label label-strong">Feriado:</span><span id="holidayName">—</span>
+          </div>
           <div class="info-row">
             <span class="small-icon">▣</span><span class="label label-strong">Amanhã:</span><span id="tomorrowInfo">—</span>
           </div>
@@ -76,33 +79,33 @@
     <article class="card daytime-card">
       <div class="card-head daytime-head"><div class="icon-bubble">☎</div><h2>CONTATO DIURNO</h2></div>
       <div class="card-body daytime-body">
-        <p>Segunda a sábado, 7h às 19h</p>
+        <p>Segunda a sexta, em dias não feriados, 7h às 19h</p>
         <div class="day-phone"><span class="round-icon">☎</span><a href="tel:+5516991651192">(16) 99165-1192</a></div>
-        <div class="day-note"><span class="info-symbol">i</span><em>Usar este contato no período diurno</em></div>
+        <div class="day-note"><span class="info-symbol">i</span><em>Usar este contato no período diurno quando não houver plantão de 24h</em></div>
       </div>
     </article>
   </section>
 
   <section class="legend-card">
     <div class="legend-title"><span class="legend-round">▤</span><strong>Legenda</strong></div>
-    <div class="legend-item"><span class="legend-round">☾</span><div><span>Sobreaviso noturno:</span><strong>19h às 7h</strong></div></div>
-    <div class="legend-item"><span class="legend-round">24h</span><div><span>Domingo:</span><strong>plantão 24h</strong></div></div>
-    <div class="legend-item"><span class="legend-round">⚙</span><div><span>Informações exibidas</span><strong>automaticamente com base na escala</strong></div></div>
+    <div class="legend-item"><span class="legend-round">12h</span><div><span>Plantão de 12h:</span><strong>19h às 7h</strong></div></div>
+    <div class="legend-item"><span class="legend-round">24h</span><div><span>Plantão de 24h:</span><strong>sábados, domingos e feriados</strong></div></div>
+    <div class="legend-item"><span class="legend-round">⚙</span><div><span>Feriados considerados:</span><strong>nacionais, estadual de SP e municipais de Ribeirão Preto; sem pontos facultativos</strong></div></div>
   </section>
 
   <section id="schedulePanel" class="detail-panel" hidden>
     <div class="panel-heading">
-      <div><p class="eyebrow">CONSULTA</p><h2>Escala completa, dia a dia</h2><p>Selecione o período ou pesquise pelo nome do médico.</p></div>
+      <div><p class="eyebrow">CONSULTA</p><h2>Escala completa, dia a dia</h2><p>A duração do plantão é calculada automaticamente conforme dia da semana e feriados.</p></div>
       <button class="close-panel" type="button" data-close="schedulePanel" aria-label="Fechar">×</button>
     </div>
     <div class="filters">
       <label>Ano<select id="scheduleYear"></select></label>
       <label>Mês<select id="scheduleMonth"><option value="all">Todos</option></select></label>
-      <label class="search-label">Pesquisar<input id="scheduleSearch" type="search" placeholder="Ex.: Luciana ou 15/09"></label>
+      <label class="search-label">Pesquisar<input id="scheduleSearch" type="search" placeholder="Ex.: Luciana, 15/09 ou 24h"></label>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Data</th><th>Dia</th><th>Endoscopista</th><th>Plantão</th></tr></thead>
+        <thead><tr><th>Data</th><th>Dia</th><th>Endoscopista</th><th>Duração</th><th>Horário / motivo</th></tr></thead>
         <tbody id="scheduleTable"></tbody>
       </table>
     </div>
@@ -111,13 +114,14 @@
 
   <section id="monthlyPanel" class="detail-panel" hidden>
     <div class="panel-heading">
-      <div><p class="eyebrow">RESUMO MENSAL</p><h2>Dias de plantão por médico</h2><p>Quantidade e datas em que cada profissional ficou de sobreaviso.</p></div>
+      <div><p class="eyebrow">RESUMO MENSAL</p><h2>Plantões de 12h e 24h por médico</h2><p>Contagem mensal e relação das datas de cada tipo de plantão.</p></div>
       <button class="close-panel" type="button" data-close="monthlyPanel" aria-label="Fechar">×</button>
     </div>
     <div class="filters compact">
       <label>Ano<select id="monthlyYear"></select></label>
       <label>Mês<select id="monthlyMonth"></select></label>
     </div>
+    <div id="monthlyTotals" class="month-overview"></div>
     <div id="monthlyCards" class="monthly-cards"></div>
   </section>
 
