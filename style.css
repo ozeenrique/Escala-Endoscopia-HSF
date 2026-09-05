@@ -11,3 +11,7 @@
 footer{display:flex;justify-content:space-between;gap:20px;padding:18px 4px 0;color:#6d7786;font-size:13px}.out-of-range{color:#8b2d2d!important}
 @media(max-width:900px){body{padding:16px}.hero{padding:26px 22px;min-height:150px}.hero-art{opacity:.28;right:5px}.action-bar{grid-template-columns:1fr}.dashboard-grid{grid-template-columns:1fr}.daytime-card{margin-top:0}.legend-card{grid-template-columns:1fr 1fr}.legend-item:nth-child(3){border-left:none;border-top:1px solid var(--line)}.legend-item:nth-child(4){border-top:1px solid var(--line)}.monthly-cards{grid-template-columns:1fr}}
 @media(max-width:620px){.brand-mark{display:none}.hero h1{font-size:34px}.subtitle{font-size:21px}.main-body{padding:24px 18px 18px}.card-head{padding:18px}.info-row{grid-template-columns:34px 1fr}.info-row>:nth-child(3){grid-column:2}.holiday-row{margin:0 -18px;padding-left:18px;padding-right:18px}.legend-card{grid-template-columns:1fr}.legend-item,.legend-title{border-left:none;border-top:1px solid var(--line)}.legend-title{border-top:none}.detail-panel{padding:20px 16px}.filters,.filters.compact{grid-template-columns:1fr;max-width:none}.panel-heading h2{font-size:24px}.month-overview{grid-template-columns:1fr}.doctor-counts{grid-template-columns:1fr 1fr}footer{flex-direction:column}}
+
+.upcoming-pill{background:#fff6e8!important;color:#9a5a08!important;border-color:#e9c27f!important}
+.upcoming-pill .status-dot{background:#d88a17!important}
+@media(min-width:901px){#schedulePanel table{min-width:980px}}

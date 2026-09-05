@@ -67,7 +67,7 @@
             <span class="small-icon">★</span><span class="label label-strong">Feriado:</span><span id="holidayName">—</span>
           </div>
           <div class="info-row">
-            <span class="small-icon">▣</span><span class="label label-strong">Amanhã:</span><span id="tomorrowInfo">—</span>
+            <span class="small-icon">▣</span><span class="label label-strong">Próximo plantão:</span><span id="tomorrowInfo">—</span>
           </div>
           <div class="info-row">
             <span class="small-icon">↻</span><span class="label label-strong">Próxima troca:</span><span id="nextChange">—</span>
@@ -88,8 +88,8 @@
 
   <section class="legend-card">
     <div class="legend-title"><span class="legend-round">▤</span><strong>Legenda</strong></div>
-    <div class="legend-item"><span class="legend-round">12h</span><div><span>Plantão de 12h:</span><strong>19h às 7h</strong></div></div>
-    <div class="legend-item"><span class="legend-round">24h</span><div><span>Plantão de 24h:</span><strong>sábados, domingos e feriados</strong></div></div>
+    <div class="legend-item"><span class="legend-round">12h</span><div><span>Plantão de 12h:</span><strong>19:00 às 06:59 do dia seguinte</strong></div></div>
+    <div class="legend-item"><span class="legend-round">24h</span><div><span>Plantão de 24h:</span><strong>07:00 às 06:59 do dia seguinte</strong></div></div>
     <div class="legend-item"><span class="legend-round">⚙</span><div><span>Feriados considerados:</span><strong>nacionais, estadual de SP e municipais de Ribeirão Preto; sem pontos facultativos</strong></div></div>
   </section>
 
@@ -105,7 +105,7 @@
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Data</th><th>Dia</th><th>Endoscopista</th><th>Duração</th><th>Horário / motivo</th></tr></thead>
+        <thead><tr><th>Origem</th><th>Dia</th><th>Endoscopista</th><th>Duração</th><th>Início</th><th>Término</th><th>Motivo</th></tr></thead>
         <tbody id="scheduleTable"></tbody>
       </table>
     </div>
@@ -127,7 +127,7 @@
 
   <footer>
     <span>HSF – Endoscopia</span>
-    <span>Escala cadastrada de 01/01/2026 a 31/12/2027</span>
+    <span>Escala cadastrada de 01/01/2026 a 31/12/2027 · <strong>v4</strong></span>
   </footer>
 </main>
 <script src="app.js"></script>

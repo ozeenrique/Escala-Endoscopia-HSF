@@ -8,58 +8,136 @@ const ptBR=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'
 function parseISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)}
 function localISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
-function nextDay(d){const n=new Date(d);n.setDate(n.getDate()+1);return n}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function nextDay(d){return addDays(d,1)}
+function previousDay(d){return addDays(d,-1)}
 function waPhone(p){return '55'+p.replace(/\D/g,'').replace(/^55/,'')}
 function telPhone(p){return 'tel:+'+waPhone(p)}
 function holidayName(d){return holidays[localISO(d)]||null}
 function shiftHours(d){return (d.getDay()===0||d.getDay()===6||holidayName(d))?24:12}
-function shiftType(d){
-  const h=shiftHours(d),holiday=holidayName(d);
+function pad(n){return String(n).padStart(2,'0')}
+function formatDate(d){return d.toLocaleDateString('pt-BR')}
+function formatSearchDate(d){return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`}
+function timeMinutes(d){return d.getHours()*60+d.getMinutes()}
+
+function shiftStart(origin){
+  const d=new Date(origin);
+  d.setHours(shiftHours(origin)===24?7:19,0,0,0);
+  return d;
+}
+function shiftEnd(origin){
+  const d=addDays(origin,1);
+  d.setHours(6,59,59,999);
+  return d;
+}
+function shiftWindowText(origin){
+  return shiftHours(origin)===24?'07:00 às 06:59 do dia seguinte':'19:00 às 06:59 do dia seguinte';
+}
+function shiftType(origin){
+  const h=shiftHours(origin),holiday=holidayName(origin);
   if(h===24){
-    if(holiday)return `Plantão 24h — feriado`;
-    if(d.getDay()===6)return 'Plantão 24h — sábado';
+    if(holiday)return 'Plantão 24h — feriado';
+    if(origin.getDay()===6)return 'Plantão 24h — sábado';
     return 'Plantão 24h — domingo';
   }
-  return 'Plantão 12h — 19h às 7h';
+  return 'Plantão 12h — dia útil';
 }
 function shiftReason(d){
-  const h=shiftHours(d),holiday=holidayName(d);
-  if(h===12)return '19h às 7h';
-  if(holiday)return `24h — ${holiday}`;
-  return d.getDay()===6?'24h — sábado':'24h — domingo';
+  const holiday=holidayName(d);
+  if(shiftHours(d)===12)return 'Dia útil';
+  if(holiday)return holiday;
+  return d.getDay()===6?'Sábado':'Domingo';
 }
-function findNextChange(today,name){let d=nextDay(today);for(let i=0;i<730;i++){const e=schedule[localISO(d)];if(e&&e.name!==name)return{date:d,entry:e};d=nextDay(d)}return null}
-function formatDate(d){return d.toLocaleDateString('pt-BR')}
-function formatSearchDate(d){return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`}
+
+function currentShiftState(now){
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12);
+  const mins=timeMinutes(now);
+
+  if(mins<420){
+    const origin=previousDay(today);
+    return {origin,entry:schedule[localISO(origin)]||null,active:true,status:'Plantão ativo',kind:'active'};
+  }
+
+  if(shiftHours(today)===24){
+    return {origin:today,entry:schedule[localISO(today)]||null,active:true,status:'Plantão ativo',kind:'active'};
+  }
+
+  if(mins>=1140){
+    return {origin:today,entry:schedule[localISO(today)]||null,active:true,status:'Plantão ativo',kind:'active'};
+  }
+
+  return {origin:today,entry:schedule[localISO(today)]||null,active:false,status:'Plantão inicia hoje às 19:00',kind:'upcoming'};
+}
+
+function findNextChange(origin,name){
+  let d=nextDay(origin);
+  for(let i=0;i<730;i++){
+    const e=schedule[localISO(d)];
+    if(e&&e.name!==name)return {date:d,entry:e};
+    d=nextDay(d);
+  }
+  return null;
+}
+
+function setStatusPill(text,kind){
+  const pill=document.querySelector('.status-pill');
+  pill.querySelector('span:last-child').textContent=text;
+  pill.classList.toggle('upcoming-pill',kind==='upcoming');
+  pill.querySelector('.status-dot').textContent=kind==='upcoming'?'◷':'✓';
+}
 
 function renderDashboard(){
-  const today=new Date();today.setHours(12,0,0,0);
-  document.getElementById('todayDate').textContent=cap(ptBR.format(today));
-  const e=schedule[localISO(today)],wa=document.getElementById('whatsappButton');
+  const now=new Date();
+  const state=currentShiftState(now);
+  const origin=state.origin;
+  const e=state.entry;
+  const wa=document.getElementById('whatsappButton');
+  const todayKey=localISO(new Date(now.getFullYear(),now.getMonth(),now.getDate(),12));
+
+  document.getElementById('todayDate').textContent=
+    localISO(origin)===todayKey ? cap(ptBR.format(origin)) : `Plantão iniciado em ${cap(ptBR.format(origin))}`;
+
   if(!e){
-    document.getElementById('doctorName').textContent='Sem escala cadastrada para esta data';
+    document.getElementById('doctorName').textContent='Sem escala cadastrada para este plantão';
     document.getElementById('doctorName').classList.add('out-of-range');
     document.getElementById('doctorPhone').textContent='—';
     document.getElementById('shiftType').textContent='—';
-    wa.href='#';wa.setAttribute('aria-disabled','true');return;
+    wa.href='#'; wa.setAttribute('aria-disabled','true');
+    return;
   }
-  document.getElementById('doctorName').textContent=e.name;
-  const ph=document.getElementById('doctorPhone');ph.textContent=e.phone;ph.href=telPhone(e.phone);
-  document.getElementById('shiftType').textContent=shiftType(today);
 
-  const hn=holidayName(today),hr=document.getElementById('holidayRow');
+  document.getElementById('doctorName').textContent=e.name;
+  const ph=document.getElementById('doctorPhone');
+  ph.textContent=e.phone; ph.href=telPhone(e.phone);
+  document.getElementById('shiftType').textContent=`${shiftType(origin)} · ${shiftWindowText(origin)}`;
+  setStatusPill(state.status,state.kind);
+
+  const hn=holidayName(origin),hr=document.getElementById('holidayRow');
   hr.hidden=!hn;
   if(hn)document.getElementById('holidayName').textContent=hn;
 
-  const tom=nextDay(today),te=schedule[localISO(tom)];
-  document.getElementById('tomorrowInfo').textContent=te?`${cap(ptBR.format(tom))} — ${te.name} — ${shiftHours(tom)}h`:'Sem escala cadastrada';
-  const nc=findNextChange(today,e.name);
-  document.getElementById('nextChange').textContent=nc?`${formatDate(nc.date)} — ${nc.entry.name}`:'Sem troca cadastrada';
+  const nextOrigin=nextDay(origin),nextEntry=schedule[localISO(nextOrigin)];
+  if(nextEntry){
+    const start=shiftStart(nextOrigin);
+    document.getElementById('tomorrowInfo').textContent=
+      `${cap(ptBR.format(nextOrigin))} — ${nextEntry.name} — ${shiftHours(nextOrigin)}h, inicia ${pad(start.getHours())}:${pad(start.getMinutes())}`;
+  } else {
+    document.getElementById('tomorrowInfo').textContent='Sem escala cadastrada';
+  }
+
+  const nc=findNextChange(origin,e.name);
+  document.getElementById('nextChange').textContent=nc
+    ? `${formatDate(nc.date)} — ${nc.entry.name} — início ${shiftHours(nc.date)===24?'07:00':'19:00'}`
+    : 'Sem troca cadastrada';
+
   wa.href=`https://wa.me/${waPhone(e.phone)}?text=${encodeURIComponent('Olá, '+e.name+'. Estou entrando em contato referente ao sobreaviso da Endoscopia HSF.')}`;
 }
 
 const years=[...new Set(Object.keys(schedule).map(k=>k.slice(0,4)))].sort();
-function fillSelect(select,values,labeler){select.innerHTML='';values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=labeler?labeler(v):v;select.appendChild(o)})}
+function fillSelect(select,values,labeler){
+  select.innerHTML='';
+  values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=labeler?labeler(v):v;select.appendChild(o)});
+}
 function populateFilters(){
   fillSelect(document.getElementById('scheduleYear'),years);
   fillSelect(document.getElementById('monthlyYear'),years);
@@ -74,73 +152,118 @@ function populateFilters(){
 }
 
 function renderScheduleTable(){
-  const y=document.getElementById('scheduleYear').value,m=document.getElementById('scheduleMonth').value,q=document.getElementById('scheduleSearch').value.trim().toLowerCase();
-  const tbody=document.getElementById('scheduleTable');tbody.innerHTML='';
+  const y=document.getElementById('scheduleYear').value;
+  const m=document.getElementById('scheduleMonth').value;
+  const q=document.getElementById('scheduleSearch').value.trim().toLowerCase();
+  const tbody=document.getElementById('scheduleTable'); tbody.innerHTML='';
+
   const rows=Object.entries(schedule).filter(([iso,e])=>{
     if(!iso.startsWith(y+'-'))return false;
     if(m!=='all'&&!iso.startsWith(`${y}-${m}-`))return false;
-    const d=parseISO(iso),h=shiftHours(d),reason=shiftReason(d);
-    const hay=`${e.name} ${formatSearchDate(d)} ${shortWeek[d.getDay()]} ${h}h ${reason}`.toLowerCase();
+    const d=parseISO(iso),h=shiftHours(d),start=shiftStart(d),end=shiftEnd(d);
+    const hay=`${e.name} ${formatSearchDate(d)} ${shortWeek[d.getDay()]} ${h}h ${shiftReason(d)} ${pad(start.getHours())}:${pad(start.getMinutes())} ${formatSearchDate(end)}`.toLowerCase();
     return !q||hay.includes(q);
   }).sort((a,b)=>a[0].localeCompare(b[0]));
 
   rows.forEach(([iso,e])=>{
-    const d=parseISO(iso),h=shiftHours(d),tr=document.createElement('tr');
-    const texts=[formatSearchDate(d),shortWeek[d.getDay()],e.name];
-    texts.forEach(text=>{const td=document.createElement('td');td.textContent=text;tr.appendChild(td)});
+    const d=parseISO(iso),h=shiftHours(d),start=shiftStart(d),end=shiftEnd(d),tr=document.createElement('tr');
+
+    [formatSearchDate(d),shortWeek[d.getDay()],e.name].forEach(text=>{
+      const td=document.createElement('td'); td.textContent=text; tr.appendChild(td);
+    });
+
     const tdH=document.createElement('td'),badge=document.createElement('span');
-    badge.className=`duration-badge duration-${h}`;badge.textContent=`${h}h`;tdH.appendChild(badge);tr.appendChild(tdH);
-    const tdR=document.createElement('td');tdR.textContent=shiftReason(d);if(holidayName(d))tdR.className='holiday-text';tr.appendChild(tdR);
+    badge.className=`duration-badge duration-${h}`; badge.textContent=`${h}h`; tdH.appendChild(badge); tr.appendChild(tdH);
+
+    const tdStart=document.createElement('td');
+    tdStart.textContent=`${formatSearchDate(start)} ${pad(start.getHours())}:${pad(start.getMinutes())}`;
+    tr.appendChild(tdStart);
+
+    const tdEnd=document.createElement('td');
+    tdEnd.textContent=`${formatSearchDate(end)} 06:59`;
+    tr.appendChild(tdEnd);
+
+    const tdR=document.createElement('td');
+    tdR.textContent=shiftReason(d);
+    if(holidayName(d))tdR.className='holiday-text';
+    tr.appendChild(tdR);
+
     tbody.appendChild(tr);
   });
-  const c12=rows.filter(([iso])=>shiftHours(parseISO(iso))===12).length,c24=rows.length-c12;
-  document.getElementById('scheduleCount').textContent=`${rows.length} dia(s) — ${c12} plantão(ões) de 12h e ${c24} plantão(ões) de 24h`;
+
+  const c12=rows.filter(([iso])=>shiftHours(parseISO(iso))===12).length;
+  const c24=rows.length-c12;
+  document.getElementById('scheduleCount').textContent=
+    `${rows.length} plantão(ões) com origem no período selecionado — ${c12} de 12h e ${c24} de 24h`;
 }
 
 function renderMonthly(){
-  const y=document.getElementById('monthlyYear').value,m=document.getElementById('monthlyMonth').value;
-  const box=document.getElementById('monthlyCards'),overview=document.getElementById('monthlyTotals');box.innerHTML='';overview.innerHTML='';
-  const groups={};let month12=0,month24=0;
-  Object.entries(schedule).filter(([iso])=>iso.startsWith(`${y}-${m}-`)).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([iso,e])=>{
-    const d=parseISO(iso),h=shiftHours(d);
-    if(h===12)month12++;else month24++;
-    if(!groups[e.name])groups[e.name]={phone:e.phone,h12:[],h24:[]};
-    groups[e.name][h===12?'h12':'h24'].push(d);
-  });
+  const y=document.getElementById('monthlyYear').value;
+  const m=document.getElementById('monthlyMonth').value;
+  const box=document.getElementById('monthlyCards');
+  const overview=document.getElementById('monthlyTotals');
+  box.innerHTML=''; overview.innerHTML='';
+
+  const groups={}; let month12=0,month24=0;
+
+  Object.entries(schedule)
+    .filter(([iso])=>iso.startsWith(`${y}-${m}-`))
+    .sort((a,b)=>a[0].localeCompare(b[0]))
+    .forEach(([iso,e])=>{
+      const d=parseISO(iso),h=shiftHours(d);
+      if(h===12)month12++; else month24++;
+      if(!groups[e.name])groups[e.name]={phone:e.phone,h12:[],h24:[]};
+      groups[e.name][h===12?'h12':'h24'].push(d);
+    });
 
   [['12h',month12],['24h',month24]].forEach(([label,count])=>{
-    const div=document.createElement('div');div.className='overview-box';
-    div.innerHTML=`<strong>${count}</strong><span>plantões de ${label} no mês</span>`;overview.appendChild(div);
+    const div=document.createElement('div'); div.className='overview-box';
+    div.innerHTML=`<strong>${count}</strong><span>plantões de ${label} com origem no mês</span>`;
+    overview.appendChild(div);
   });
 
   const order=['Dr. José Henrique','Dr. Alexandre Célia','Dra. Luciana','Dr. Ricardo Mazagão'];
   const names=Object.keys(groups).sort((a,b)=>order.indexOf(a)-order.indexOf(b));
-  if(!names.length){box.innerHTML='<div class="empty-month">Não há plantões cadastrados neste mês.</div>';return}
 
   names.forEach(name=>{
-    const g=groups[name],card=document.createElement('article');card.className='doctor-summary';
-    const h=document.createElement('h3');h.textContent=name;card.appendChild(h);
+    const g=groups[name],card=document.createElement('article'); card.className='doctor-summary';
+    const h=document.createElement('h3'); h.textContent=name; card.appendChild(h);
 
-    const counts=document.createElement('div');counts.className='doctor-counts';
+    const counts=document.createElement('div'); counts.className='doctor-counts';
     counts.innerHTML=`<div class="count-box"><strong>${g.h12.length}</strong><span>plantões de 12h</span></div><div class="count-box"><strong>${g.h24.length}</strong><span>plantões de 24h</span></div>`;
     card.appendChild(counts);
 
     [['12h',g.h12,false],['24h',g.h24,true]].forEach(([label,days,is24])=>{
-      const section=document.createElement('div');section.className='day-section';
-      const title=document.createElement('div');title.className='day-section-title';title.innerHTML=`<span>Dias de ${label}</span><span>${days.length}</span>`;section.appendChild(title);
-      const list=document.createElement('div');list.className='days-list';
-      if(days.length===0){const span=document.createElement('span');span.className='day-chip';span.textContent='Nenhum';list.appendChild(span)}
-      days.forEach(d=>{const chip=document.createElement('span');chip.className=`day-chip${is24?' is24':''}`;const hol=holidayName(d);chip.textContent=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} (${shortWeek[d.getDay()]})${hol?' • feriado':''}`;if(hol)chip.title=hol;list.appendChild(chip)});
-      section.appendChild(list);card.appendChild(section);
+      const section=document.createElement('div'); section.className='day-section';
+      const title=document.createElement('div'); title.className='day-section-title';
+      title.innerHTML=`<span>Datas de origem — ${label}</span><span>${days.length}</span>`;
+      section.appendChild(title);
+
+      const list=document.createElement('div'); list.className='days-list';
+      if(days.length===0){
+        const span=document.createElement('span'); span.className='day-chip'; span.textContent='Nenhum'; list.appendChild(span);
+      }
+
+      days.forEach(d=>{
+        const chip=document.createElement('span');
+        chip.className=`day-chip${is24?' is24':''}`;
+        const hol=holidayName(d);
+        chip.textContent=`${pad(d.getDate())}/${pad(d.getMonth()+1)} (${shortWeek[d.getDay()]})${hol?' • feriado':''}`;
+        if(hol)chip.title=hol;
+        list.appendChild(chip);
+      });
+
+      section.appendChild(list); card.appendChild(section);
     });
+
     box.appendChild(card);
   });
 }
 
 function openPanel(id){
   ['schedulePanel','monthlyPanel'].forEach(pid=>document.getElementById(pid).hidden=pid!==id);
-  const el=document.getElementById(id);el.hidden=false;
-  if(id==='schedulePanel')renderScheduleTable();else renderMonthly();
+  const el=document.getElementById(id); el.hidden=false;
+  if(id==='schedulePanel')renderScheduleTable(); else renderMonthly();
   el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -151,4 +274,5 @@ document.querySelectorAll('.close-panel').forEach(b=>b.addEventListener('click',
 document.getElementById('scheduleSearch').addEventListener('input',renderScheduleTable);
 ['monthlyYear','monthlyMonth'].forEach(id=>document.getElementById(id).addEventListener('change',renderMonthly));
 
-populateFilters();renderDashboard();
+populateFilters();
+renderDashboard();
