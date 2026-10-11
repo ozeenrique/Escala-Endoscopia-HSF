@@ -1,36 +1,25 @@
-# HSF – Endoscopia | Dashboard de Sobreaviso — v4
+# HSF – Endoscopia | Dashboard de Sobreaviso — v5
 
-## Regra temporal dos plantões
+## Mudanças
 
-A data da escala é a **data de origem do plantão**.
+- Removido o botão WhatsApp do topo.
+- O status do plantão agora é a ação de WhatsApp:
+  - **Plantão ativo - clique para conversar por WhatsApp** quando o plantão estiver ativo.
+  - **Plantão não iniciado** quando ainda não chegou o horário de início; nesse estado o botão fica inativo.
+- **Escala completa** e **Plantões por mês** foram movidos para baixo, imediatamente acima da legenda.
+- A linha de feriado é ocultada quando não houver feriado.
 
-### Plantão de 24h
-- início: 07:00 da data de origem
-- término: 06:59 do dia seguinte
+## Alterações da escala
 
-Exemplo: o plantão de 05/09 pertence integralmente a 05/09, embora termine em 06/09 às 06:59.
+- 10/10/2026: Dra. Luciana
+- 11/10/2026: Dra. Luciana
+- 17/10/2026: Dr. Alexandre Célia
+- 18/10/2026: Dr. Alexandre Célia
 
-### Plantão de 12h
-- início: 19:00 da data de origem
-- término: 06:59 do dia seguinte
+## Regra de horário preservada
 
-### Comportamento do dashboard
-Entre 00:00 e 06:59, o dashboard continua exibindo o plantão iniciado no dia anterior.
-Em dias de plantão de 12h, entre 07:00 e 18:59, o médico do dia aparece como próximo plantonista e o status informa que o plantão inicia às 19:00.
+- Plantão 24h: 07:00 da data de origem até 06:59 do dia seguinte.
+- Plantão 12h: 19:00 da data de origem até 06:59 do dia seguinte.
+- Entre 00:00 e 06:59, o dashboard mantém o plantonista do dia anterior.
 
-## Contagem mensal
-A contagem é sempre pela data de origem:
-- plantão iniciado no último dia do mês e terminado no mês seguinte conta integralmente no mês de origem.
-
-## Escala completa
-A tabela mostra:
-- data de origem
-- dia da semana
-- médico
-- duração
-- início
-- término
-- motivo
-
-## Versão
-Rodapé: **v4**
+Rodapé identificado como **v5**.

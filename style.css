@@ -15,3 +15,13 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:18px 4px 0;co
 .upcoming-pill{background:#fff6e8!important;color:#9a5a08!important;border-color:#e9c27f!important}
 .upcoming-pill .status-dot{background:#d88a17!important}
 @media(min-width:901px){#schedulePanel table{min-width:980px}}
+
+/* v5 */
+.action-bar.lower-actions{margin-top:24px;margin-bottom:0;grid-template-columns:1fr 1fr}
+.status-action{text-decoration:none;cursor:pointer;padding-right:14px;min-width:min(100%,560px);justify-content:center}
+.status-action .status-arrow{font-size:30px;line-height:1;margin-left:6px}
+.status-action.inactive-status{cursor:default;pointer-events:none;background:#f4f6f9!important;color:#667085!important;border-color:#d7dde5!important}
+.status-action.inactive-status .status-dot{background:#9aa5b1!important}
+.status-action.inactive-status .status-arrow{display:none}
+.holiday-row[hidden]{display:none!important}
+@media(max-width:900px){.action-bar.lower-actions{grid-template-columns:1fr}}
