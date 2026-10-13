@@ -79,20 +79,27 @@ function findNextChange(origin,name){
   return null;
 }
 
-function setStatusButton(text,kind,entry){
+function setStatusButton(kind,entry){
   const button=document.getElementById('statusWhatsapp');
-  const label=document.getElementById('statusText');
+  const title=document.getElementById('statusTitle');
+  const subtitle=document.getElementById('statusSubtitle');
   const dot=button.querySelector('.status-dot');
-  label.textContent=text;
-  if(kind==='active'&&entry){
+
+  if(kind==='active' && entry){
     button.classList.remove('inactive-status');
     dot.textContent='✓';
+    title.textContent='Plantão ativo';
+    subtitle.textContent='Clique para conversar por WhatsApp';
+    subtitle.hidden=false;
     button.href=`https://wa.me/${waPhone(entry.phone)}?text=${encodeURIComponent('Olá, '+entry.name+'. Estou entrando em contato referente ao sobreaviso da Endoscopia HSF.')}`;
-    button.setAttribute('aria-label',`${text}. Abrir conversa com ${entry.name} no WhatsApp`);
+    button.setAttribute('aria-label',`Plantão ativo. Clique para conversar com ${entry.name} por WhatsApp`);
     button.removeAttribute('aria-disabled');
   }else{
     button.classList.add('inactive-status');
     dot.textContent='◷';
+    title.textContent='Plantão não iniciado';
+    subtitle.textContent='';
+    subtitle.hidden=true;
     button.href='#';
     button.setAttribute('aria-disabled','true');
     button.setAttribute('aria-label','Plantão não iniciado');
@@ -114,7 +121,7 @@ function renderDashboard(){
     document.getElementById('doctorName').classList.add('out-of-range');
     document.getElementById('doctorPhone').textContent='—';
     document.getElementById('shiftType').textContent='—';
-    setStatusButton('Plantão não iniciado','inactive',null);
+    setStatusButton('inactive',null);
     return;
   }
 
@@ -125,9 +132,9 @@ function renderDashboard(){
   document.getElementById('shiftType').textContent=`${shiftType(origin)} · ${shiftWindowText(origin)}`;
 
   if(state.active){
-    setStatusButton('Plantão ativo - clique para conversar por WhatsApp','active',e);
+    setStatusButton('active',e);
   }else{
-    setStatusButton('Plantão não iniciado','inactive',e);
+    setStatusButton('inactive',e);
   }
 
   const hn=holidayName(origin),hr=document.getElementById('holidayRow');

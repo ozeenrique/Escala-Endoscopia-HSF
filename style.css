@@ -25,3 +25,94 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:18px 4px 0;co
 .status-action.inactive-status .status-arrow{display:none}
 .holiday-row[hidden]{display:none!important}
 @media(max-width:900px){.action-bar.lower-actions{grid-template-columns:1fr}}
+
+
+/* v6 — status responsivo */
+.status-action{
+  width:min(100%,560px);
+  min-width:0;
+  min-height:64px;
+  padding:10px 16px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 24px;
+  align-items:center;
+  column-gap:12px;
+  text-align:left;
+  white-space:normal;
+  overflow:visible;
+}
+.status-action .status-dot{
+  width:32px;
+  height:32px;
+}
+.status-copy{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:2px;
+  line-height:1.2;
+}
+.status-copy strong{
+  display:block;
+  font-size:19px;
+  line-height:1.2;
+}
+#statusSubtitle{
+  display:block;
+  font-size:14px;
+  line-height:1.35;
+  font-weight:600;
+}
+#statusSubtitle[hidden]{display:none!important}
+.status-action .status-arrow{
+  justify-self:end;
+  margin-left:0;
+}
+.status-action.inactive-status{
+  grid-template-columns:34px minmax(0,1fr);
+}
+.status-action.inactive-status .status-copy{
+  justify-content:center;
+}
+
+@media(max-width:620px){
+  .status-action{
+    width:100%;
+    min-height:82px;
+    grid-template-columns:38px minmax(0,1fr) 20px;
+    column-gap:10px;
+    padding:12px 14px;
+    border-radius:22px;
+  }
+  .status-action .status-dot{
+    width:36px;
+    height:36px;
+    font-size:20px;
+  }
+  .status-copy{
+    align-items:center;
+    text-align:center;
+    gap:3px;
+  }
+  .status-copy strong{
+    width:100%;
+    font-size:19px;
+    text-align:center;
+  }
+  #statusSubtitle{
+    width:100%;
+    max-width:220px;
+    margin:0 auto;
+    font-size:14px;
+    line-height:1.28;
+    text-align:center;
+  }
+  .status-action.inactive-status{
+    min-height:62px;
+    grid-template-columns:36px minmax(0,1fr);
+  }
+  .status-action.inactive-status .status-copy strong{
+    text-align:left;
+  }
+}

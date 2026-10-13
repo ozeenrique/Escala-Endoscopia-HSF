@@ -1,25 +1,25 @@
-# HSF – Endoscopia | Dashboard de Sobreaviso — v5
+# HSF – Endoscopia | Dashboard de Sobreaviso — v6
 
-## Mudanças
+## Alteração da v6
 
-- Removido o botão WhatsApp do topo.
-- O status do plantão agora é a ação de WhatsApp:
-  - **Plantão ativo - clique para conversar por WhatsApp** quando o plantão estiver ativo.
-  - **Plantão não iniciado** quando ainda não chegou o horário de início; nesse estado o botão fica inativo.
-- **Escala completa** e **Plantões por mês** foram movidos para baixo, imediatamente acima da legenda.
-- A linha de feriado é ocultada quando não houver feriado.
+A v6 mantém integralmente a escala e as regras da v5 e melhora a responsividade do botão de status.
 
-## Alterações da escala
+### Desktop
+- **Plantão ativo**
+- Clique para conversar por WhatsApp
 
-- 10/10/2026: Dra. Luciana
-- 11/10/2026: Dra. Luciana
-- 17/10/2026: Dr. Alexandre Célia
-- 18/10/2026: Dr. Alexandre Célia
+### Mobile
+O botão ocupa a largura útil do card e permite quebra natural da segunda mensagem, resultando normalmente em:
+- **Plantão ativo**
+- Clique para conversar por
+- WhatsApp
 
-## Regra de horário preservada
+Quando o plantão ainda não iniciou, permanece apenas **Plantão não iniciado**, sem link para WhatsApp.
 
+## Regras preservadas
 - Plantão 24h: 07:00 da data de origem até 06:59 do dia seguinte.
 - Plantão 12h: 19:00 da data de origem até 06:59 do dia seguinte.
-- Entre 00:00 e 06:59, o dashboard mantém o plantonista do dia anterior.
+- Contagem mensal pela data de origem.
+- Escala e alterações de outubro da v5 preservadas.
 
-Rodapé identificado como **v5**.
+Rodapé identificado como **v6**.
