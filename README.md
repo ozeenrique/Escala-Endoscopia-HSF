@@ -1,4 +1,4 @@
-# HSF – Endoscopia | Dashboard de Sobreaviso — v6
+# HSF – Endoscopia | Dashboard de Sobreaviso — v7
 
 ## Alteração da v6
 
@@ -22,4 +22,14 @@ Quando o plantão ainda não iniciou, permanece apenas **Plantão não iniciado*
 - Contagem mensal pela data de origem.
 - Escala e alterações de outubro da v5 preservadas.
 
-Rodapé identificado como **v6**.
+Rodapé identificado como **v7**.
+
+
+## Alterações da escala — v7
+
+- 24/10/2026 → Dra. Luciana
+- 25/10/2026 → Dra. Luciana
+- 31/10/2026 → Dr. Alexandre Célia
+- 01/11/2026 → Dr. Alexandre Célia
+
+As demais regras e o layout da v6 foram preservados.
